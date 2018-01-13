@@ -32,7 +32,7 @@ Este curso consiste de cuatro módulos.
     - Selección según sharpe
    5. Inclusión de bonos en el portafolio
    
-`Módulo 3.` **Programación lineal**
+`Módulo 4.` **Programación lineal**
 > Se aplicará una evaluación (**exámen**) y se evaluará una presentación de **proyecto.**
    1. Introducción a programación lineal
     - Portafolios de bonos
