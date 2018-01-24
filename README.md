@@ -9,7 +9,7 @@ Este curso consiste de cuatro módulos.
     - Introducción e instalación de software
    2. `git`, `GitHub`, `GitKraken`
    3. `git`, `GitHub`, `GitKraken` (Continuación)
-   4. Generación de números aleatorios uniformes (con generadores congruenciales) y normales (con Box-Muller)
+   4. Generación de números pseudoaleatorios
    5. Valuación de opciones usando el concepto de caminatas aleatorias
    6. Valuación de opciones usando árboles binomiales
 
