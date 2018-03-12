@@ -37,32 +37,67 @@ def sim_mont_portfolio(daily_ret, num_portfolios, risk_free):
     sharpe = (portfolio_ret-risk_free)/portfolio_std_dev
     return pd.DataFrame(np.column_stack((portfolio_ret,portfolio_std_dev,sharpe,weights)),columns=(['Rendimiento','SD','Sharpe']+list(daily_ret.columns)))
 ####### Efficient frontier points via quadratic programming
-#def optimal_portfolio(daily_ret, n_opt, risk_free):
-#    # Frontier points
-#    #Packages
-#    import pandas as pd
-#    import sklearn.covariance as skcov
-#    import numpy as np
-#    import cvxopt as opt
-#    from cvxopt import blas, solvers
-#    num_stocks = daily_ret.columns.size
-#    mus = [(10**(5.0 * t/N- 1.0)-10**(-1)) for t in range(N)]   
-#    #cvxopt matrices
-#    S = opt.matrix(skcov.ShrunkCovariance().fit(daily_ret).covariance_)
-#    daily_ret_mean = daily_ret.mean().values
-#    # Constraint matrices
-#    G = -opt.matrix(np.eye(n))   # negative n x n identity matrix
-#    h = opt.matrix(0.0, (n ,1))
-#    A = opt.matrix(np.array(np.ones(num_stocks),daily_ret_mean), (2, num_stocks))
-#    b = opt.matrix(np.array(1.0))    
-#    # Calculate efficient frontier weights using quadratic programming
-#    portfolios = [solvers.qp(mu*S, -pbar, G, h, A, b)['x'] for mu in mus]
-#    # Risk and returns
-#    returns = [252*blas.dot(pbar, x) for x in portfolios]
-#    risks = [np.sqrt(252*blas.dot(x, S*x)) for x in portfolios]
-#    portfolios=[np.eye(n).dot(portfolios[i])[:,0] for i in range(N)]
-#    returns = np.asarray(returns)
-#    risks = np.asarray(risks)
-#    sharpe=np.divide((returns-r),risks) 
-#    portfolios = np.asarray(portfolios)
-#    return  pd.DataFrame(data=np.column_stack((returns,risks,sharpe,portfolios)),columns=(['Returns','SD','Sharpe']+list(daily_returns.columns)))
+def optimal_portfolio(daily_ret, n_opt, risk_free):
+    # Frontier points
+    #Packages
+    import pandas as pd
+    import sklearn.covariance as skcov
+    import numpy as np
+    import cvxopt as opt
+    from cvxopt import blas, solvers
+    num_stocks = daily_ret.columns.size   
+    #cvxopt matrices
+    robust_cov_matrix = skcov.ShrunkCovariance().fit(daily_ret).covariance_
+    S = opt.matrix(robust_cov_matrix)
+    daily_ret_mean = daily_ret.mean().values
+    mus = np.linspace(daily_ret_mean.min(), daily_ret_mean.max(), n_opt)
+    # Constraint matrices
+    G = -opt.matrix(np.concatenate((np.array([daily_ret_mean]),np.eye(num_stocks)),axis=0))
+    p = opt.matrix(np.zeros((num_stocks, 1)))
+    A = opt.matrix(np.ones((1,num_stocks)))
+    b = opt.matrix(np.array([1.0]))    
+    # Calculate efficient frontier weights using quadratic programming
+    portfolios = np.zeros((n_opt, num_stocks))
+    for k in range(n_opt):
+        h = -opt.matrix(np.concatenate((np.array([[mus[k]]]),np.zeros((num_stocks,1))), axis=0))
+        portfolios[k,:] = np.asarray(solvers.qp(S, p, G, h, A, b)['x']).T[0]
+    # Risk and returns
+    returns = 252*portfolios.dot(daily_ret_mean)
+    risks = np.zeros(n_opt)
+    for i in range(n_opt):
+        risks[i] = np.sqrt(252*portfolios[i,:].dot(robust_cov_matrix).dot(portfolios[i,:].T))
+    sharpe = (returns-risk_free)/risks
+    return  pd.DataFrame(data=np.column_stack((returns,risks,sharpe,portfolios)),columns=(['Rendimiento','SD','Sharpe']+list(daily_ret.columns)))
+####### Efficient frontier points via quadratic programming - with bond 
+def optimal_portfolio_b(daily_ret, n_opt, risk_free, c0):
+    # Frontier points
+    #Packages
+    import pandas as pd
+    import sklearn.covariance as skcov
+    import numpy as np
+    import cvxopt as opt
+    from cvxopt import blas, solvers
+    # Bond inclusion
+    robust_cov_matrix = np.insert((np.insert(skcov.ShrunkCovariance().fit(daily_ret).covariance_, daily_ret.columns.size, 0, axis=0)) , daily_ret.columns.size, 0, axis=1)
+    daily_ret_b = pd.DataFrame(np.column_stack((np.asarray(daily_ret), c0*np.ones(daily_ret.index.size))), columns=list(daily_ret.columns)+['BOND'], index = daily_ret.index)
+    num_stocks = daily_ret_b.columns.size
+    daily_ret_mean = daily_ret_b.mean()
+    mus = np.linspace(daily_ret_mean.min(), daily_ret_mean.max(), n_opt)
+    #cvxopt matrices
+    S = opt.matrix(robust_cov_matrix)
+    G = -opt.matrix(np.concatenate((np.array([daily_ret_mean]),np.eye(num_stocks)),axis=0))
+    p = opt.matrix(np.zeros((num_stocks, 1)))
+    A = opt.matrix(np.ones((1,num_stocks)))
+    b = opt.matrix(np.array([1.0])) 
+    # Calculate efficient frontier weights using quadratic programming
+    portfolios = np.zeros((n_opt, num_stocks))
+    for k in range(n_opt):
+        h = -opt.matrix(np.concatenate((np.array([[mus[k]]]),np.zeros((num_stocks,1))), axis=0))
+        portfolios[k,:] = np.asarray(solvers.qp(S, p, G, h, A, b)['x']).T[0]
+    # Risk and returns
+    returns = 252*portfolios.dot(daily_ret_mean)
+    risks = np.zeros(n_opt)
+    for i in range(n_opt):
+        risks[i] = np.sqrt(252*portfolios[i,:].dot(robust_cov_matrix).dot(portfolios[i,:].T))
+    sharpe = (returns-risk_free)/risks
+    return  pd.DataFrame(data=np.column_stack((returns,risks,sharpe,portfolios)),columns=(['Rendimiento','SD','Sharpe']+list(daily_ret_b.columns)))
