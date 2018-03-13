@@ -4,7 +4,7 @@ def get_historical_closes(ticker, start_date, end_date=None):
     import pandas_datareader.data as web
     import pandas as pd
     import numpy as np
-    #closes = web.DataReader(name=ticker, data_source='yahoo', start=start_date, end=end_date).sort_index('major_axis')
+    #closes = web.YahooDailyReader(ticker, start_date, end_date).read().sort_index('major_axis')
     closes = web.YahooDailyReader(symbols=ticker, start=start_date, end=end_date).read()
     closes.set_axis(closes.loc['date',:,ticker[0]].values, axis=1, inplace=True)
     closes = closes.loc['adjclose'].sort_index().dropna()
