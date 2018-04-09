@@ -10,27 +10,26 @@ Este curso consiste de cuatro módulos.
    2. `git`, `GitHub`, `GitKraken`
    3. `git`, `GitHub`, `GitKraken` (Continuación)
    4. Generación de números pseudoaleatorios
-   5. Valuación de opciones usando el concepto de caminatas aleatorias
-   6. Valuación de opciones usando árboles binomiales
+   5. ¿Cómo obtener datos de acciones y ETF?
+    - Análisis estadístico de los rendimientos
+   
+`Módulo 2.` **Simulación y optimización de portafolios**
+> Se aplicará una evaluación (**exámen**) y se evaluará una presentación de **proyecto.**
+   1. Medidas de riesgo coherentes y convexas
+    - Varianza y CVAR
+   2. Simulación de portafolios y selección según sharpe
+   3. Métodos de optimización convexa para obtener la frontera eficiente
+    - Selección según sharpe
+   4. Inclusión de bonos en el portafolio
+   5. Compendio de funciones para selección de portafolios
 
-`Módulo 2.`  **¿Cómo funcionan las opciones y las estrategias con opciones?**
+`Módulo 3.`  **¿Cómo funcionan las opciones y las estrategias con opciones?**
 > Se aplicará una evaluación (**exámen**) y se evaluará una presentación de **proyecto.**
    1. Opciones call y put
-   2. Opciones con barrera
-   3. Opciones con barrera (Continuación)
-   4. Estrategias con opciones
-   5. Estrategias con opciones (Continuación)
-   
-`Módulo 3.` **Simulación y optimización de portafolios**
-> Se aplicará una evaluación (**exámen**) y se evaluará una presentación de **proyecto.**
-   1. ¿Cómo obtener datos de acciones y ETF?
-    - Análisis estadístico de los rendimientos
-   2. Medidas de riesgo coherentes y convexas
-    - Varianza y CVAR
-   3. Simulación de portafolios y selección según sharpe
-   4. Métodos de optimización convexa para obtener la frontera eficiente
-    - Selección según sharpe
-   5. Inclusión de bonos en el portafolio
+   2. Valuación de opciones usando el concepto de caminatas aleatorias
+   3. Opciones con barrera
+   4. Simulación Montecarlo y Opciones
+   5. Estrategias con opciones
    
 `Módulo 4.` **Programación lineal**
 > Se aplicará una evaluación (**exámen**) y se evaluará una presentación de **proyecto.**
